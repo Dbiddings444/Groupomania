@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import { initialState, reducer, AuthContext } from './context';
-import Page from './components/page';
+import Page from './components/Page';
 import './App.css';
 
 const App = () => {

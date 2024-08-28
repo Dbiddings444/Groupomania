@@ -1,0 +1,8 @@
+CREATE TABLE media (
+	media_id SERIAL PRIMARY KEY,
+	user_id INT,
+	content TEXT,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+

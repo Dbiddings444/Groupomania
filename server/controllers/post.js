@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const pool = new Pool({ database: 'usersdb', port: 5445 });
+const pool = new Pool({ database: 'usersdb', port: 5432 });
 const fs = require('fs');
 const path = require('path');
 

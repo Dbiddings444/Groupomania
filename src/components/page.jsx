@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context';
 import '../App.css';
-import Login from './login';
-// import Dashboard from './Dashboard';
+import Form from './Form';
+import Dashboard from './Dashboard';
+import loginIcon from '../../public/logos/icon-above-font.png'
 
 const Page = () => {
 	const {state, dispatch} = useContext(AuthContext);
@@ -37,10 +38,10 @@ const Page = () => {
 
 	return (
 		<div className="page">
-			<h1 className="page-title">Groupomania</h1>
-			<Login />
-			{/* { state.user != undefined ? <Dashboard /> : <Login /> } */}
-			
+			<div className='test'>
+			<img className='logo' alt='company logo for login'src={loginIcon}></img>
+			</div>
+			{ state.user != undefined ? <Dashboard /> : <Form /> }
 		</div>
 	)
 }
