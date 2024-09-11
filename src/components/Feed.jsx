@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context';
  import '../App.css';
-import './Feed.css'
 import Posts from './Posts';
 import Media from './Media';import PublishPost from './PublishPost';
 import PublishMedia from './PublishMedia';
