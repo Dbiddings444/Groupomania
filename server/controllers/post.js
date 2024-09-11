@@ -39,7 +39,7 @@ async function syncMediaSequence() {
 		}
 		await client.query('COMMIT');
 	} catch (err) {
-		await clietn.query('ROLLBACK');
+		await client.query('ROLLBACK');
 	} finally {
 		client.release();
 	}
@@ -51,11 +51,12 @@ module.exports = {
 		let client;
 		let now = new Date();
 		const post = req.body;
-
+		const file = req.file;
+		const media = file ? file.filename : null;
 		try {
 			client = await pool.connect();
-			const cmd = `INSERT INTO posts(user_id, content, created_at) VALUES ($1, $2, $3);`
-			const args = [post.user_id, post.content, now];
+			const cmd = `INSERT INTO posts(user_id, content, created_at, media, title) VALUES ($1, $2, $3, $4, $5);`
+			const args = [post.user_id, post.content, now, post.media, post.title ];
 			const result = await client.query(cmd, args);
 			if (result) {
 				console.log('Post inserted to database');
@@ -95,9 +96,10 @@ module.exports = {
 		try {
 			client = await pool.connect();
 			const cmd = `
-				SELECT posts.post_id, posts.content, posts.created_at, users.email
+				SELECT posts.post_id, posts.content, posts.created_at,posts.media, users.email, posts.title
 				FROM posts
-				JOIN users ON posts.user_id = users.user_id;
+				JOIN users ON posts.user_id = users.user_id
+				ORDER BY posts.created_at DESC;
 			`;
 			const result = await client.query(cmd);
 			const posts = result.rows;

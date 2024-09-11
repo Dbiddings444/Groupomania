@@ -45,7 +45,7 @@ module.exports = {
 				const token = jwt.sign(
 					{ user_id: theUser.user_id, email: theUser.email }, 
 					JWT_SECRET, 
-					{ expiresIn: '5m' }
+					{ expiresIn: '30m' }
 				);
 				res.send({ token: token, user: theUser });
 			} else {
@@ -74,8 +74,9 @@ module.exports = {
 			} else {
 				const cmd2 = `INSERT INTO users(email, password, created_at) VALUES ($1, $2, $3);`
 				const args2 = [req.body.email, encrypted, now];
-				const result2 = await client.query(cmd1, args1);	
+				const result2 = await client.query(cmd2, args2);	
 				res.send({ msg: 'success' });
+			
 			}
 		} catch (err) {
 			res.send({ msg: 'fail' });

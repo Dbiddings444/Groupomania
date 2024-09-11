@@ -38,9 +38,6 @@ const Page = () => {
 
 	return (
 		<div className="page">
-			<div className='test'>
-			<img className='logo' alt='company logo for login'src={loginIcon}></img>
-			</div>
 			{ state.user != undefined ? <Dashboard /> : <Form /> }
 		</div>
 	)

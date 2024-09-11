@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context';
-import '../App.css';
+ import '../App.css';
+import './Feed.css'
 import Posts from './Posts';
-import Media from './Media';
-import PublishPost from './PublishPost';
+import Media from './Media';import PublishPost from './PublishPost';
 import PublishMedia from './PublishMedia';
 import NewButtons from './NewButtons';
 import Tabs from './Tabs';
@@ -19,10 +19,7 @@ const Feed = () => {
 		setPostingType('text') 
 	}
 
-	const addMedia = () => { 
-		setPosting(!posting);
-		setPostingType('media')
-	}
+
 
 	const changeView = (event) => { setContentView(event.target.textContent); }
 	const cancelPost = () => { setPosting(false); }
@@ -35,10 +32,10 @@ const Feed = () => {
 
 	return (
 		<div className="feed">
-			{!posting ? <NewButtons addPost={addPost} addMedia={addMedia} /> : ''}
+			{!posting ? <NewButtons addPost={addPost} /> : ''}
 			{posting && returnGroup()}
 			<Tabs contentView={contentView} changeView={changeView} />
-			{contentView == 'Posts' ? <Posts /> : <Media />}
+			 <Posts />
 		</div>
 	)
 }

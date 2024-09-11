@@ -2,7 +2,8 @@ import React, { useReducer } from 'react';
 import { initialState, reducer, AuthContext } from './context';
 import Page from './components/Page';
 import './App.css';
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PostPage from './pages/postPage';
 const App = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 

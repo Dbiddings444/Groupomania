@@ -4,7 +4,8 @@
 	margin: 0 auto;
 	margin-top: 50px;
 	padding: 40px;
-	width: 700px;
+	width: 1000px;
+	padding-bottom: 60px;
 }
 
 .page-title {
@@ -12,12 +13,16 @@
 }
 
 .dashboard {
-
+	/* Add styles for the dashboard if needed */
 }
 
 .nav { 
 	margin-bottom: 20px;
 	border-bottom: 1px solid black;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-bottom: 10px;
 }
 
 .nav h4 {
@@ -29,7 +34,7 @@
 	text-decoration: overline;
 }
 
-/* auth form */
+/* Auth form */
 .form-title {
 	font-weight: 800;
 	margin-bottom: 20px;
@@ -50,7 +55,7 @@
 	color: blue;
 }
 
-/* profile */
+/* Profile */
 .profile {
 	margin-top: 20px;
 }
@@ -60,7 +65,7 @@
 }
 
 .feed {
-	margin-top: 20px;
+	padding: 40px 110px;
 }
 
 .posts {
@@ -73,6 +78,7 @@
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
 	margin-bottom: 20px;
 	cursor: pointer;
+	display: flex;
 }
 
 .post:hover {
@@ -81,16 +87,13 @@
 
 .post-text {
 	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
 }
 
 .post-btn {
 	margin-right: 10px;
 }
-
-/*.post-form {
-	display: flex;
-	flex-direction: column;
-}*/
 
 .post-form textarea {
 	width: 100%;
@@ -122,6 +125,8 @@
 
 .media-post-img {
 	width: 200px;
+	height: 150px;
+	object-fit: cover;
 }
 
 .feed-tabs {
@@ -133,10 +138,107 @@
 	border: none;
 	background: none;
 }
+
 .logo {
-  width: 300px;
+	width: 300px;
 }
-.test{
+
+.test {
 	display: flex;
 	justify-content: center;
+}
+
+.errorMessage {
+	color: red;
+}
+
+.img-container {
+	display: flex;
+	justify-content: center;
+	box-sizing: content-box;
+	width: 50%;
+}
+
+.img-container img {
+	width: 300px;
+}
+
+.post-info {
+	display: flex;
+}
+
+.title {
+	font-weight: 800;
+	font-size: larger;
+}
+
+.text {
+	color: gray;
+	font-weight: 300;
+	font-size: 14px;
+}
+
+.nav-img-container img {
+	width: 180px;
+}
+
+.tabs-container {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+}
+
+.without-image .info-container{
+	padding-left: 10px;
+}
+.without-image img {
+	display: none;
+}
+
+.info-container {
+	padding-left: 30px;
+}
+
+.the-form {
+	padding: 0 230px;
+}
+
+.the-form img {
+	width: 240px;
+	margin-bottom: 40px;
+}
+
+#last {
+	margin-right: 0;
+}
+
+/* Media Query for tablet and smaller screens (max-width: 768px) */
+@media (max-width: 768px) {
+	.feed {
+		padding: 40px 0;
+	}
+
+	.the-form {
+		padding: 0;
+	}
+
+	.page {
+		width: 100%;
+		padding: 0px;
+	}
+	
+	.nav {
+		flex-direction: column; /* Stack items in column for smaller screens */
+		align-items: flex-start;
+		padding: 0 30px;
+	}
+
+	.post{
+		margin-bottom: 30px;
+		padding: 20px 20px;
+	}
+
+	.the-form{
+		padding: 0 150px;
+	}
 }

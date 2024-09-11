@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context';
+import logo from '../../public/logos/icon-left-font-monochrome-black.svg'
 import '../App.css';
+
 
 const Form = () => {
 	const [email, setEmail] = useState('');
@@ -43,6 +45,8 @@ const Form = () => {
 					if (data.error) {
 						setError(data.error);
 					}
+					alert('your account has been successfully created')
+					setIsLogin(true);
 				}
 			})
 			.catch(err => { console.log(err) })
@@ -50,9 +54,10 @@ const Form = () => {
 
 	return (
 		<div className="the-form">
+			<img src={logo}/>
 			<h3 className="form-title">{formText()}</h3>
 			<div className="form-group">
-				<label htmlFor="email">Email</label>
+				<label htmlFor="email">UserName</label>
 				<input id="email" className="form-control" type="email" onInput={(e) => updateEmail(e)} value={email} />
 			</div>
 			<div className="form-group">
@@ -66,7 +71,7 @@ const Form = () => {
 					{isLogin ? 'Signup' : 'Login'}
 				</span>
 			</p>
-			<p>{error}</p>
+			<p className='errorMessage'>{error}</p>
 		</div>
 	)
 }
