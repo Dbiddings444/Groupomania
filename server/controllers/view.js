@@ -1,8 +1,9 @@
 const { Pool } = require("pg");
-const pool = new Pool({ database: "usersdb", port: 5432 });
 const dotenv = require("dotenv");
 
 dotenv.config({ path: ".env" });
+
+const pool = new Pool({ database: process.env.DB_NAME, port: 5432, password: process.env.DB_PASSWORD, username: process.env.DB_USER});
 
 module.exports = {
   getViews: async (req, res) => {

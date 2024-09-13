@@ -28,7 +28,7 @@ const Media = () => {
 			{state.media.map((img, idx) => {
 				return (
 					<div>
-						<img className="media-post-img" src={`uploads/${img.content}`} />
+						<img className="media-post-img" src={`uploads/${img.content}`} alt={`${img.content}`} />
 						<p className="media-post-user">{img.email}</p>
 						<p className="media-post-time">{img.created_at}</p>
 					</div>
