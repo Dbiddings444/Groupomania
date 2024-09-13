@@ -42,10 +42,12 @@ const Form = () => {
 						dispatch({ type: 'set user and dashboard', payload: [user, 'Profile']})
 					} else {
 						setError(data.error);
+						return
 					}
 				} else {
 					if (data.error) {
 						setError(data.error);
+						return
 					}
 					alert('your account has been successfully created')
 					setIsLogin(true);
