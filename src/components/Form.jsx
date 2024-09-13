@@ -37,6 +37,8 @@ const Form = () => {
 						const { token, user } = data;
 						console.log(user);
 						localStorage.setItem('token', token);
+						localStorage.setItem('user_id', user.user_id);
+						console.log('user_id', user.user_id);
 						dispatch({ type: 'set user and dashboard', payload: [user, 'Profile']})
 					} else {
 						setError(data.error);
@@ -54,7 +56,7 @@ const Form = () => {
 
 	return (
 		<div className="the-form">
-			<img src={logo}/>
+			<img src={logo} alt='Company logo horizontal black'/>
 			<h3 className="form-title">{formText()}</h3>
 			<div className="form-group">
 				<label htmlFor="email">UserName</label>

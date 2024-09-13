@@ -21,7 +21,7 @@ export function reducer(state, action) {
 		case "set posts":
 			return {
 				...state,
-				posts: action.payload
+				posts: Array.isArray(action.payload) ? action.payload : []
 			}
 			break;
 		case 'set dashboard':
@@ -49,5 +49,8 @@ export function reducer(state, action) {
 				media: action.payload
 			}
 			break;
+			
+			default:
+				return state;
 	}
 }

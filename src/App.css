@@ -98,7 +98,13 @@
 .post-form textarea {
 	width: 100%;
 }
+#email{
+	     border: 2px solid black;
+}
 
+#password{
+	border: 2px solid black;
+}
 .post-container {
 	padding: 8px;
 }

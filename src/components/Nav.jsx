@@ -24,7 +24,7 @@ const Nav = () => {
 	return (
 		<div className="nav">
 			<div className='nav-img-container'>
-			<img src={logo}/>
+			<img src={logo} alt='Company logo horizontal black'/>
 			</div>
 			<div className='tabs-container'>
 			<h4  style={activeProfile()} onClick={(e) => changeView(e)}>Profile</h4>

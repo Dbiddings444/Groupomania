@@ -3,13 +3,13 @@ import { AuthContext } from '../context';
 
 const Media = () => {
 	const {state, dispatch} = useContext(AuthContext);
-
+	const token = localStorage.getItem('token'); // Retrieve the token
 	const getMedia = async () => {
 		const obj = {};
 
 		const options = {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',   'Authorization': `Bearer ${token}` },
 			body: JSON.stringify(obj)
 		}
 

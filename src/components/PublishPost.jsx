@@ -8,7 +8,7 @@ const PublishPost = ({ cancel }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
-
+const token = localStorage.getItem('token');
   const updateText = (event) => {
     setText(event.target.value);
   };
@@ -21,14 +21,16 @@ const PublishPost = ({ cancel }) => {
 
     const options = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", 
+      'Authorization': `Bearer ${token}`
+    },
       body: JSON.stringify(obj),
     };
 
     await fetch("/getPosts", options)
       .then((res) => res.json())
       .then((data) => {
-        dispatch({ type: "set posts", payload: data });
+        dispatch({ type: "set posts", payload: data.posts });
       })
       .catch((err) => {
         console.log(err);
@@ -47,9 +49,15 @@ const PublishPost = ({ cancel }) => {
     alert("Title and content are required!"); // Notify the user that input is missing
     return; // Stop execution if validation fails
 	  }
+
+     if (!state.user || !state.user.user_id) {
+    alert("User ID is not available. Please sign in.");
+    return;
+  }
     formData.append("user_id", state.user.user_id); // Add user_id
+    console.log(state.user.user_id);
     formData.append("content", text); // Add the post content
-	formData.append("title", title)
+  formData.append('title', title)
     // Add the file only if one is selected
     if (file) {
       formData.append("media", file); // Append the actual file
@@ -57,6 +65,9 @@ const PublishPost = ({ cancel }) => {
 
     const options = {
       method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
       body: formData,
     };
 

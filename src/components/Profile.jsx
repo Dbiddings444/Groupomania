@@ -7,6 +7,7 @@ const Profile = () => {
 
 	const logout = () => {
 		localStorage.removeItem('token');
+		localStorage.removeItem('user_id');
 		dispatch({ type: 'set user', payload: null })
 	}
 
@@ -23,6 +24,9 @@ const Profile = () => {
 			.then(res => res.json())
 			.then(data => { logout() })
 			.catch(err => { console.log(err) })
+
+			localStorage.removeItem('token');
+			dispatch({ type: 'set user', payload: null })
 	};
 
 	return (
