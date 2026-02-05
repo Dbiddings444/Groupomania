@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../context";
 import "../App.css";
 
@@ -6,115 +6,102 @@ const PublishPost = ({ cancel }) => {
   const { state, dispatch } = useContext(AuthContext);
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
-const token = localStorage.getItem('token');
-  const updateText = (event) => {
-    setText(event.target.value);
-  };
-  const updateTitle = (event) => {
-    setTitle(event.target.value);
-  };
+
+  const token = localStorage.getItem("token");
+
+  const updateText = (e) => setText(e.target.value);
+  const updateTitle = (e) => setTitle(e.target.value);
 
   const getPosts = async () => {
-    let obj = {};
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      };
 
-    const options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json", 
-      'Authorization': `Bearer ${token}`
-    },
-      body: JSON.stringify(obj),
-    };
-
-    await fetch("/getPosts", options)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch({ type: "set posts", payload: data.posts });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      const res = await fetch("/getPosts", options);
+      const data = await res.json();
+      if (data && data.posts) dispatch({ type: "set posts", payload: data.posts });
+    } catch (err) {
+      console.error("Failed to refresh posts:", err);
+    }
   };
 
   const handleFileChange = (event) => {
-    console.log(state.user.email);
-    setContent(event.target.files[0].name);
-    setFile(event.target.files[0]);
+    const f = event.target.files && event.target.files[0];
+    if (f) setFile(f);
   };
 
   const publish = async () => {
-    const formData = new FormData();
-	  if (!title || !text) {
-    alert("Title and content are required!"); // Notify the user that input is missing
-    return; // Stop execution if validation fails
-	  }
-
-     if (!state.user || !state.user.user_id) {
-    alert("User ID is not available. Please sign in.");
-    return;
-  }
-    formData.append("user_id", state.user.user_id); // Add user_id
-    console.log(state.user.user_id);
-    formData.append("content", text); // Add the post content
-  formData.append('title', title)
-    // Add the file only if one is selected
-    if (file) {
-      formData.append("media", file); // Append the actual file
+    if (!title.trim() || !text.trim()) {
+      alert("Title and content are required.");
+      return;
     }
 
-    const options = {
-      method: "POST",
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData,
-    };
+    if (!state || !state.user || !state.user.user_id) {
+      alert("Please sign in before publishing.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("user_id", state.user.user_id);
+    formData.append("content", text);
+    formData.append("title", title);
+    if (file) formData.append("media", file);
 
     try {
+      const options = {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      };
+
       const response = await fetch("/addPost", options);
+      if (!response.ok) throw new Error(`Server error: ${response.status}`);
 
-      // Check if the response is not OK (e.g., status code 404 or 500)
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const data = await response.json(); // Parse JSON response
-      getPosts(); // Refresh the posts
-	  cancel(); // Close the input form after successful submissio
-	  alert("Your post has successfully been published")
+      await response.json();
+      await getPosts();
+      if (typeof cancel === "function") cancel();
+      alert("Your post has been published.");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Publish failed:", error);
+      alert("Failed to publish post. See console for details.");
     }
   };
 
   return (
     <div className="post-form">
-		  <textarea
-        className="text-input"
-		placeholder="Title"
-        onChange={(e) => updateTitle(e)}
-		required
-      ></textarea>
       <textarea
         className="text-input"
-		placeholder="Story Content"
-        onChange={(e) => updateText(e)}
-		required
-      ></textarea>
-      <input
-        className="file-input"
-        type="file"
-        onChange={(e) => {
-          handleFileChange(e);
-        }}
+        placeholder="Title"
+        value={title}
+        onChange={updateTitle}
+        required
       />
-      <button className="btn btn-primary post-btn" onClick={() => publish()}>
-        Publish
-      </button>
-      <button className="btn btn-secondary post-btn" onClick={() => cancel()}>
-        Cancel
-      </button>
+
+      <textarea
+        className="text-input"
+        placeholder="Story Content"
+        value={text}
+        onChange={updateText}
+        required
+      />
+
+      <input className="file-input" type="file" onChange={handleFileChange} />
+
+      <div style={{ marginTop: 8 }}>
+        <button className="btn btn-primary post-btn" onClick={publish}>
+          Publish
+        </button>
+        <button className="btn btn-secondary post-btn" onClick={cancel}>
+          Cancel
+        </button>
+      </div>
     </div>
   );
 };

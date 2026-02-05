@@ -1,26 +1,29 @@
 import React, { useReducer, useEffect } from 'react';
 import { initialState, reducer, AuthContext } from './context';
-import Page from './components/Page';
+import Page from './components/page';
 import './App.css';
 
 const App = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	// Initialize user from localStorage safely
 	useEffect(() => {
-		const storedUserId = localStorage.getItem('user_id');
-		if (storedUserId) {
-			// Ensure that the payload matches the structure expected by the reducer
-			dispatch({ type: 'set user', payload: { user_id: storedUserId } });
+		const raw = localStorage.getItem('user');
+		if (raw) {
+			try {
+				const user = JSON.parse(raw);
+				dispatch({ type: 'set user', payload: user });
+			} catch (e) {
+				// fallback to single id if necessary
+				const id = localStorage.getItem('user_id');
+				if (id) dispatch({ type: 'set user', payload: { user_id: id } });
+			}
 		}
 	}, []);
 
 	return (
-		<div className="app">
-			<AuthContext.Provider value={{ state, dispatch }}>
-				<Page />
-			</AuthContext.Provider>
-		</div>
+		<AuthContext.Provider value={{ state, dispatch }}>
+			<Page />
+		</AuthContext.Provider>
 	);
 };
 

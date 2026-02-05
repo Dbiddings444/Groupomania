@@ -1,70 +1,77 @@
-# Getting Started with Create React App
+# Groupomania — Social Feed App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Summary
 
-## Available Scripts
+- What it is: Groupomania is a small social feed application with a React frontend and an Express + PostgreSQL backend. Users can sign in, publish posts (with optional media), and view a feed of posts and uploaded media.
+- Purpose: Built as a full-stack project to demonstrate CRUD operations, file uploads, authentication tokens, and state management using React context + reducer.
 
-In the project directory, you can run:
+High-level architecture
 
-### `npm start`
+- Frontend: React (JSX) in `src/`.
+  - `src/App.jsx` — app root: provides `AuthContext` and mounts `components/page.jsx`.
+  - `src/context.js` — global state (reducer + initialState).
+  - `src/components/` — UI components: `PublishPost.jsx`, `PublishMedia.jsx`, `Feed.jsx`, `Post.jsx`, etc.
+  - Styling: `src/App.css` + Bootstrap (imported in `src/index.js`).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Backend: Express server in `server/`.
+  - `server/server.js` — starts Express, mounts routes and serves static assets from `public/`.
+  - `server/routes/*.js` — route declarations for users, posts and media.
+  - `server/controllers/*.js` — database interaction using `pg` Pool.
+  - `server/middleware/` — helpers such as `authorize.js` and `upload.js` (file-storage and auth token checks).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Database: PostgreSQL. SQL files are in `queries/` for schema and helper queries.
 
-### `npm test`
+How it works (request flow)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Client obtains an auth token after signing in (stored in localStorage).
+- Publishing a post: `PublishPost.jsx` builds a FormData payload (user_id, title, content, optional file) and POSTs to `/addPost`.
+- Server receives request, middleware handles file upload (if present), controller inserts rows into `posts` and `media` tables.
+- Feed refresh: frontend calls `/getPosts` which returns joined rows (post content + user email) ordered by created time.
 
-### `npm run build`
+How to run (developer quick steps)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Install dependencies (frontend + backend use the same package.json):
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Environment: create a `.env` file at the project root with DB and server variables. Minimal example:
 
-### `npm run eject`
+```env
+DB_NAME=your_db_name
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_PORT=5432
+PORT=8760
+JWT_SECRET=your_jwt_secret
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Start the server in development (from project root):
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run devb
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Start the frontend in parallel:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm run devf
+```
 
-## Learn More
+improvements for the future 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Add input sanitization & server-side validation for injected content.
+- Add unit tests for reducers and API endpoints (supertest + jest).
+- Use environment-specific start scripts and a `Procfile`/docker configuration for consistent deployment.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Files you may want to inspect during an interview
 
-### Code Splitting
+- `src/components/PublishPost.jsx` — shows FormData usage and client-side validation.
+- `server/controllers/post.js` — DB queries and sequence sync logic.
+- `server/middleware/authorize.js` — token handling logic.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Contact
 
-### Analyzing the Bundle Size
+If you want further polishing (refactor components to TypeScript, add tests, or prepare a demo script), tell me which area to prioritize and I will implement it.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

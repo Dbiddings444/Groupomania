@@ -5,7 +5,12 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: ".env" });
 
-const pool = new Pool({ database: process.env.DB_NAME, port: 5432, password: process.env.DB_PASSWORD, username: process.env.DB_USER});
+const pool = new Pool({
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+  password: process.env.DB_PASSWORD,
+  user: process.env.DB_USER,
+});
 
 async function syncPostSequence() {
   const client = await pool.connect();
@@ -65,51 +70,41 @@ module.exports = {
   addPost: async (req, res) => {
     await syncPostSequence();
     let client;
-    let now = new Date();
-    const post = req.body;
-    const file = req.file;
-    const media = file ? file.filename : null;
+    const now = new Date();
+    const post = req.body || {};
     try {
       client = await pool.connect();
       const cmd = `INSERT INTO posts(user_id, content, created_at, media, title) VALUES ($1, $2, $3, $4, $5);`;
-      const args = [post.user_id, post.content, now, post.media, post.title];
-      const result = await client.query(cmd, args);
-      if (result) {
-        console.log("Post inserted to database");
-      }
+      const args = [post.user_id, post.content || null, now, post.media || null, post.title || null];
+      await client.query(cmd, args);
+      console.log("Post inserted to database");
       res.status(200).json({ message: "Post added successfully!" });
     } catch (err) {
-      console.log("DB query error: ", err);
-      res
-        .status(500)
-        .json({ message: "Internal server error", error: err.message });
+      console.error("DB query error: ", err);
+      res.status(500).json({ message: "Internal server error", error: err.message });
     } finally {
-      client.release();
+      if (client) client.release();
     }
   },
 
   addMedia: async (req, res) => {
     await syncMediaSequence();
     let client;
-    let now = new Date();
-    const media = req.body;
+    const now = new Date();
+    const media = req.body || {};
 
     try {
       client = await pool.connect();
       const cmd = `INSERT INTO media(user_id, content, created_at) VALUES ($1, $2, $3);`;
-      const args = [media.user_id, media.content, now];
-      const result = await client.query(cmd, args);
-      if (result) {
-        console.log("Media inserted to database");
-      }
+      const args = [media.user_id, media.content || null, now];
+      await client.query(cmd, args);
+      console.log("Media inserted to database");
       res.status(200).json({ message: "Media added successfully!" });
     } catch (err) {
-      console.log("DB query error: ", err);
-      res
-        .status(500)
-        .json({ message: "Internal server error", error: err.message });
+      console.error("DB query error: ", err);
+      res.status(500).json({ message: "Internal server error", error: err.message });
     } finally {
-      client.release();
+      if (client) client.release();
     }
   },
 
@@ -118,58 +113,53 @@ module.exports = {
     try {
       client = await pool.connect();
       const cmd = `
-				SELECT posts.post_id, posts.content, posts.created_at,posts.media, users.email, posts.title
-				FROM posts
-				JOIN users ON posts.user_id = users.user_id
-				ORDER BY posts.created_at DESC;
-			`;
+        SELECT posts.post_id, posts.content, posts.created_at, posts.media, users.email, posts.title
+        FROM posts
+        JOIN users ON posts.user_id = users.user_id
+        ORDER BY posts.created_at DESC;
+      `;
       const result = await client.query(cmd);
-      const posts = result.rows;
+      const posts = result.rows || [];
       res.status(200).json({ message: "Post retrieved successfully!", posts });
     } catch (err) {
-      console.log("DB query error: ", err);
-      res
-        .status(500)
-        .json({ message: "Internal server error", error: err.message });
+      console.error("DB query error: ", err);
+      res.status(500).json({ message: "Internal server error", error: err.message });
     } finally {
-      client.release();
+      if (client) client.release();
     }
   },
 
   getMedia: async (req, res) => {
     let client;
-
     try {
       client = await pool.connect();
       const cmd = `
-				SELECT media.media_id, media.content, media.created_at, users.email
-				FROM media
-				JOIN users ON media.user_id = users.user_id;
-			`;
+        SELECT media.media_id, media.content, media.created_at, users.email
+        FROM media
+        JOIN users ON media.user_id = users.user_id;
+      `;
       const result = await client.query(cmd);
-      const media = result.rows;
-
+      const media = result.rows || [];
       res.status(200).json({ message: "Media retrieved successfully!", media });
     } catch (err) {
-      console.log("DB query error: ", err);
-      res
-        .status(500)
-        .json({ message: "Internal server error", error: err.message });
+      console.error("DB query error: ", err);
+      res.status(500).json({ message: "Internal server error", error: err.message });
     } finally {
-      client.release();
+      if (client) client.release();
     }
   },
 
   getMediaFiles: (req, res) => {
-    const dir = path.join(__dirname, "../../public/uploads");
-    const files = fs.readdirSync(dir);
+    try {
+      const dir = path.join(__dirname, "../../public/uploads");
+      if (!fs.existsSync(dir)) return res.status(200).json({ files: [] });
 
-    const mediaFiles = files.filter((file) => {
-      return (
-        file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png")
-      );
-    });
-
-    res.send(mediaFiles);
+      const files = fs.readdirSync(dir);
+      const mediaFiles = files.filter((f) => /\.(jpe?g|png)$/i.test(f));
+      res.status(200).json({ files: mediaFiles });
+    } catch (err) {
+      console.error("Failed to list media files:", err);
+      res.status(500).json({ error: err.message });
+    }
   },
 };
